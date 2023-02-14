@@ -80,14 +80,12 @@ module.exports = function (app, model) {
       }
 
       model.findById(bookid, (err, doc)=>{
-        if(err) return res.send("no book exists")
-        console.log(comment)
+        if(err|| !doc) return res.send("no book exists")
         doc.comments.push(comment)
-        console.log(doc.comments)
         let commentcount = doc.comments.length
         model.findByIdAndUpdate(bookid, {
           comments: doc.comments,
-          commentcount
+          commentcount: commentcount
         },{new: true}, (err, docUpdate)=>{
           if(err) return res.send("error add comment")
           return res.json(docUpdate)
