@@ -10,6 +10,26 @@ const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
 
 const app = express();
+const mongoose = require('mongoose')
+
+const bookModel = require('./model/book')
+
+mongoose.connect(process.env.DB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+
+const conn = mongoose.connection
+
+conn.on('connected', function() {
+  console.log('database is connected successfully');
+});
+
+conn.on('disconnected',function(){
+  console.log('database is disconnected successfully');
+})
+
+conn.on('error', console.error.bind(console, 'connection error:'));
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
@@ -28,7 +48,7 @@ app.route('/')
 fccTestingRoutes(app);
 
 //Routing for API 
-apiRoutes(app);  
+apiRoutes(app, bookModel);  
     
 //404 Not Found Middleware
 app.use(function(req, res, next) {
